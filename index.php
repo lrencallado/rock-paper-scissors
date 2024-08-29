@@ -7,6 +7,10 @@ class Player
 
     public function __construct(string $name)
     {
+        if (empty($name)) {
+            throw new InvalidArgumentException('Player name cannot be empty.');
+        }
+        
         $this->name = $name;
     }
 
@@ -22,6 +26,10 @@ class Player
 
     public function setChoice(string $choice): void
     {
+        if (empty($choice)) {
+            throw new InvalidArgumentException('Choice cannot be empty.');
+        }
+
         $this->choice = $choice;
     }
 }
@@ -42,6 +50,11 @@ class RandomChoicePlayer extends Player
     public function __construct(string $name, array $choices)
     {
         parent::__construct($name);
+
+        if (empty($choices)) {
+            throw new InvalidArgumentException('Choices array cannot be empty.');
+        }
+
         $this->choices = $choices;
     }
 
@@ -61,19 +74,32 @@ class Game
     private int $player1Wins = 0;
     private int $player2Wins = 0;
     private int $draws = 0;
+    private array $errors = [];
     
     public function __construct(Player $player1, Player $player2, array $rules, int $rounds = 100)
     {
+        if (is_null($player1) || is_null($player2)) {
+            throw new InvalidArgumentException('Both players must be initialized.');
+        }
+
+        if (empty($rules)) {
+            throw new InvalidArgumentException('Rules cannot be empty.');
+        }
+
         $this->player1 = $player1;
         $this->player2 = $player2;
         $this->rules = $rules;
         $this->rounds = $rounds;
     }
 
-    public function play(): void
+    public function play()
     {
         for ($i = 0; $i < $this->rounds; $i++) {
             $this->player2->setRandomChoice(); // Player 2 makes a random choice
+
+            if (!$this->player1->getChoice() || !$this->player2->getChoice()) {
+                throw new RuntimeException('Both players must make a choice before playing a round.');
+            }
 
             $result = $this->getRoundResult();
 
@@ -102,6 +128,11 @@ class Game
         echo "{$this->player2->getName()} Wins: {$this->player2Wins}\n";
         echo "Draws: {$this->draws}\n";
     }
+
+    private function errors(): bool
+    {
+        return count($this->errors) > 0;
+    }
 }
 
 /**
@@ -116,8 +147,8 @@ $rules = [
 ];
 
 // Initialize players
-$player1 = new FixedChoicePlayer("Player 1", 'rock');
-$player2 = new RandomChoicePlayer("Player 2", array_keys($rules));
+$player1 = new FixedChoicePlayer('Player 1', 'rock');
+$player2 = new RandomChoicePlayer('Player 2', array_keys($rules));
 
 // Play the game
 $game = new Game($player1, $player2, $rules);
