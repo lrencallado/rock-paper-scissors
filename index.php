@@ -92,11 +92,8 @@ class Game
         $choice1 = $this->player1->getChoice();
         $choice2 = $this->player2->getChoice();
 
-        if ($choice1 === $choice2) {
-            return 0; // Draw
-        }
-
-        return $this->rules[$choice1] === $choice2 ? 1 : 2;
+        // Return the result based on the rules
+        return $this->rules[$choice1][$choice2];
     }
 
     public function showStatistics(): void
@@ -107,11 +104,15 @@ class Game
     }
 }
 
-// Define rules
+/**
+ * 0 if Draw
+ * 1 if Player 1 wins
+ * 2 if Player 2 wins
+ */
 $rules = [
-    'rock' => 'scissors',
-    'scissors' => 'paper',
-    'paper' => 'rock'
+    'rock' => ['rock' => 0, 'scissors' => 1, 'paper' => 2],
+    'scissors' => ['scissors' => 0, 'paper' => 1, 'rock' => 2],
+    'paper' => ['paper' => 0, 'rock' => 1, 'scissors' => 2],
 ];
 
 // Initialize players
