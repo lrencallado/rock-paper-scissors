@@ -1,4 +1,6 @@
 {
+    "name": "lrencallado/rock-paper-scissors",
+    "description": "A simple Rock-Paper-Scissors game implemented in PHP",
     "autoload": {
         "psr-4": {
             "RockPaperScissorsShoot\\": "src/"

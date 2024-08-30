@@ -2,12 +2,11 @@
 
 namespace RockPaperScissorsShoot;
 
-use RuntimeException;
-
 class Game
 {
     private Player $player1;
     private Player $player2;
+    private Rule $rule;
     private array $rules;
     private int $rounds;
 
@@ -15,42 +14,35 @@ class Game
     private int $player2Wins = 0;
     private int $draws = 0;
     
-    public function __construct(Player $player1, Player $player2, array $rules, int $rounds = 100)
+    public function __construct(Player $player1, Player $player2, Rule $rule, int $rounds = 100)
     {
         $this->player1 = $player1;
         $this->player2 = $player2;
-        $this->rules = $rules;
+        $this->rule = $rule;
         $this->rounds = $rounds;
     }
 
-    public function play()
+    public function play(): void
     {
         for ($i = 0; $i < $this->rounds; $i++) {
-            $this->player2->setRandomChoice(); // Player 2 makes a random choice
-
-            if (!$this->player1->getChoice() || !$this->player2->getChoice()) {
-                throw new RuntimeException('Both players must make a choice before playing a round.');
-            }
-
-            $result = $this->getRoundResult();
-
-            if ($result === 1) {
-                $this->player1Wins++;
-            } elseif ($result === 2) {
-                $this->player2Wins++;
-            } else {
-                $this->draws++;
-            }
+            $this->playRound();
         }
     }
 
-    private function getRoundResult(): int
+    private function playRound(): void
     {
         $choice1 = $this->player1->getChoice();
         $choice2 = $this->player2->getChoice();
 
-        // Return the result based on the rules
-        return $this->rules[$choice1][$choice2];
+        $result = $this->rule->determineOutcome($choice1, $choice2);
+
+        if ($result === 1) {
+            $this->player1Wins++;
+        } elseif ($result === 2) {
+            $this->player2Wins++;
+        } else {
+            $this->draws++;
+        }
     }
 
     public function showStatistics(): void

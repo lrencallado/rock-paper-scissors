@@ -5,24 +5,21 @@ require 'autoload.php';
 use RockPaperScissorsShoot\FixedHandPlayer;
 use RockPaperScissorsShoot\Game;
 use RockPaperScissorsShoot\RandomHandPlayer;
+use RockPaperScissorsShoot\Rule;
 
-/**
- * 0 if Draw
- * 1 if Player 1 wins
- * 2 if Player 2 wins
- */
-$rules = [
-    'rock' => ['rock' => 0, 'scissors' => 1, 'paper' => 2],
-    'scissors' => ['scissors' => 0, 'paper' => 1, 'rock' => 2],
-    'paper' => ['paper' => 0, 'rock' => 1, 'scissors' => 2],
-];
+$rule = new Rule();
+
+// Example of adding new rules for "Lizard" and "Spock"
+$rule->addRule('rock', 'lizard', 1); // Rock beats Lizard
+$rule->addRule('lizard', 'Spock', 1); // Lizard beats Spock
 
 // Initialize players
-$player1 = new FixedHandPlayer('Player 1', 'rock');
-$player2 = new RandomHandPlayer('Player 2', array_keys($rules));
+$player1 = new FixedHandPlayer('Player 1', 'rocks');
+
+$player2 = new RandomHandPlayer('Player 2', ['rock', 'paper', 'scissors']);
 
 // Play the game
-$game = new Game($player1, $player2, $rules);
+$game = new Game($player1, $player2, $rule);
 $game->play();
 $game->showStatistics();
 
