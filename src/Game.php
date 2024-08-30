@@ -7,7 +7,6 @@ class Game
     private Player $player1;
     private Player $player2;
     private Rule $rule;
-    private array $rules;
     private int $rounds;
 
     private int $player1Wins = 0;
